@@ -31,7 +31,7 @@ function analyzeHistory(days) {
     daily.push([].concat([date, total, desktop_total, android_total], desktop, android).join(','));
   });
   daily.push(hdr);
-  fs.writeFileSync('daily.csv', daily.reverse().join('\n'), 'utf8');
+  fs.writeFileSync('daily.csv', daily.reverse().join('\n') + '\n', 'utf8');
 }
 
 analyzeHistory(730);
