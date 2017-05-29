@@ -10,6 +10,7 @@ const forHistory = utils.forHistory;
 function analyzeHistory(days) {
   let hdr = null;
   let daily = [];
+  let map = {};
   forHistory(days, date => {
     let data = cache.getSync(date);
     if (!data) {
@@ -28,7 +29,9 @@ function analyzeHistory(days) {
     let desktop_total = desktop.reduce((acc, val) => acc + val, 0);
     let android_total = android.reduce((acc, val) => acc + val, 0);
     let total = desktop_total + android_total;
-    daily.push([].concat([date, total, desktop_total, android_total], desktop, android).join(','));
+    let values = [].concat([date, total, desktop_total, android_total], desktop, android);
+    map[date] = values;
+    daily.push(values.join(','));
   });
   daily.push(hdr);
   fs.writeFileSync('daily.csv', daily.reverse().join('\n') + '\n', 'utf8');
