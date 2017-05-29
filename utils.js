@@ -11,6 +11,12 @@ function dateString(daysIntoThePast) {
 // run closure for the last 'days' days, passing the date
 function forHistory(days, closure) {
   for (let i = 1; i <= days; ++i) {
+    let d = dateString(i);
+    assert(d !== '2017-01-23' && d !== '2017-01-24');
+    if (d === '2017-02-08') {
+      // numbers seem to be wildly off for this day
+      continue;
+    }
     closure(dateString(i));
   }
 }
