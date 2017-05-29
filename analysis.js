@@ -9,6 +9,7 @@ const forHistory = utils.forHistory;
 
 function analyzeHistory(days) {
   let hdr = null;
+  let output = [];
   forHistory(days, date => {
     let data = cache.getSync(date);
     if (!data) {
@@ -28,8 +29,9 @@ function analyzeHistory(days) {
     let desktop_total = desktop.reduce((acc, val) => acc + val, 0);
     let android_total = android.reduce((acc, val) => acc + val, 0);
     let total = desktop_total + android_total;
-    console.log([].concat([date, total, desktop_total, android_total], desktop, android).join(','));
+    output.push([].concat([date, total, desktop_total, android_total], desktop, android).join(','));
   });
+  console.log(output.reverse().join('\n'));
 }
 
-analyzeHistory(220);
+analyzeHistory(730);
