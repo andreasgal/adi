@@ -21,7 +21,7 @@ function forHistory(days, closure) {
       // numbers seem to be wildly off for this day
       continue;
     }
-    closure(dateString(i));
+    closure(d, i);
   }
 }
 

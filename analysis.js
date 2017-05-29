@@ -1,7 +1,7 @@
 const assert = require('assert');
+const fs = require('fs');
 const printf = require('printf');
 const cache = require('persistent-cache')();
-const request = require('request');
 
 const utils = require('./utils');
 const dateString = utils.dateString;
@@ -9,7 +9,7 @@ const forHistory = utils.forHistory;
 
 function analyzeHistory(days) {
   let hdr = null;
-  let output = [];
+  let daily = [];
   forHistory(days, date => {
     let data = cache.getSync(date);
     if (!data) {
@@ -21,7 +21,6 @@ function analyzeHistory(days) {
                         data.FennecAndroid.channel.map(x => "Android/" + x)).join(',');
     if (!hdr) {
       hdr = fmt;
-      console.log(hdr);
     }
     assert(hdr === fmt);
     let desktop = data.Firefox.adi;
@@ -29,9 +28,10 @@ function analyzeHistory(days) {
     let desktop_total = desktop.reduce((acc, val) => acc + val, 0);
     let android_total = android.reduce((acc, val) => acc + val, 0);
     let total = desktop_total + android_total;
-    output.push([].concat([date, total, desktop_total, android_total], desktop, android).join(','));
+    daily.push([].concat([date, total, desktop_total, android_total], desktop, android).join(','));
   });
-  console.log(output.reverse().join('\n'));
+  daily.push(hdr);
+  fs.writeFileSync('daily.csv', daily.reverse().join('\n'), 'utf8');
 }
 
 analyzeHistory(730);
