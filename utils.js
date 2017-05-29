@@ -1,3 +1,4 @@
+const assert = require('assert');
 const printf = require('printf');
 
 // return a date string for a specific day in the past (2017-05-27)
@@ -12,7 +13,10 @@ function dateString(daysIntoThePast) {
 function forHistory(days, closure) {
   for (let i = 1; i <= days; ++i) {
     let d = dateString(i);
-    assert(d !== '2017-01-23' && d !== '2017-01-24');
+    if (d === '2017-01-24' || d === '2017-01-25') {
+      // server returned an internal error for these, so we don't have data for them
+      continue;
+    }
     if (d === '2017-02-08') {
       // numbers seem to be wildly off for this day
       continue;
