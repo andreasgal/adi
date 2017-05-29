@@ -61,7 +61,12 @@ function analyzeHistory() {
       let last_year = lookup(year + i, N);
       return average(this_year) - average(last_year);
     }
-    delta7.push([date, delta(2), delta(3)].join(','));
+    let delta_desktop = delta(2);
+    let delta_android = delta(3);
+    let today = map[date];
+    let total_desktop = today[2];
+    let total_android = today[3];
+    delta7.push([date, delta_desktop, delta_desktop/total_desktop*100, delta_android, delta_android/total_android*100].join(','));
   });
   delta7.push(["Date", "Desktop", "Android"].join(','));
   fs.writeFileSync('delta.csv', delta7.reverse().join('\n') + '\n');
