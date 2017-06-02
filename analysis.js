@@ -13,11 +13,11 @@ function average(list) {
 
 function analyzeHistory() {
   let year = 365;
-  let two_years = year * 2;
+  let three_years = year * 3;
   let hdr = null;
   let daily = [];
   let map = {};
-  forHistory(two_years, date => {
+  forHistory(three_years, date => {
     let data = cache.getSync(date);
     if (!data) {
       return;
@@ -43,7 +43,7 @@ function analyzeHistory() {
   fs.writeFileSync('daily.csv', daily.reverse().join('\n') + '\n', 'utf8');
   // now compare each 7 day window with the previous year
   let delta7 = [];
-  forHistory(year - 7, (date, i) => {
+  forHistory(year * 2 - 7, (date, i) => {
     // fetch a specific value for the 7 day window starting with day 'j'
     function lookup(j, N) {
       let result = [];
@@ -64,11 +64,11 @@ function analyzeHistory() {
     let delta_desktop = delta(2);
     let delta_android = delta(3);
     let today = map[date];
-    let total_desktop = today[2];
-    let total_android = today[3];
+    let total_desktop = average(lookup(i, 2));
+    let total_android = average(lookup(i, 3));
     delta7.push([date, delta_desktop, delta_desktop/total_desktop*100, delta_android, delta_android/total_android*100].join(','));
   });
-  delta7.push(["Date", "Desktop", "Android"].join(','));
+  delta7.push(["Date", "Delta", "Delta %", "Delta", "Delta %"].join(','));
   fs.writeFileSync('delta.csv', delta7.reverse().join('\n') + '\n');
 }
 

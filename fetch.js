@@ -47,4 +47,4 @@ function fetchHistory(days) {
   });
 }
 
-fetchHistory(730);
+fetchHistory(1260);

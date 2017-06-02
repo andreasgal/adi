@@ -13,7 +13,7 @@ function dateString(daysIntoThePast) {
 function forHistory(days, closure) {
   for (let i = 1; i <= days; ++i) {
     let d = dateString(i);
-    if (d === '2017-01-24' || d === '2017-01-25') {
+    if (d === '2017-01-24' || d === '2017-01-25' || d === '2015-04-28' || d === '2015-04-27') {
       // server returned an internal error for these, so we don't have data for them
       continue;
     }
