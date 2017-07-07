@@ -11,10 +11,10 @@ function average(list) {
   return list.reduce((acc, val) => acc + val, 0) / list.length;
 }
 
-function analyzeHistory() {
+function analyzeHistory(window) {
   let year = 365;
   let three_years = year * 3;
-  let hdr = null;
+  let hdr = ["Date", "Total", "Desktop", "Android"];
   let daily = [];
   let map = {};
   forHistory(three_years, date => {
@@ -23,13 +23,6 @@ function analyzeHistory() {
       return;
     }
     data = JSON.parse(data);
-    let fmt = [].concat(["Date", "Total", "Desktop", "Android", ],
-                        data.Firefox.channel.map(x => "Desktop/" + x),
-                        data.FennecAndroid.channel.map(x => "Android/" + x)).join(',');
-    if (!hdr) {
-      hdr = fmt;
-    }
-    assert(hdr === fmt);
     let desktop = data.Firefox.adi;
     let android = data.FennecAndroid.adi;
     let desktop_total = desktop.reduce((acc, val) => acc + val, 0);
@@ -41,13 +34,13 @@ function analyzeHistory() {
   });
   daily.push(hdr);
   fs.writeFileSync('daily.csv', daily.reverse().join('\n') + '\n', 'utf8');
-  // now compare each 7 day window with the previous year
-  let delta7 = [];
-  forHistory(year * 2 - 7, (date, i) => {
-    // fetch a specific value for the 7 day window starting with day 'j'
+  // now compare each [window] day window with the previous year
+  let deltaWindow = [];
+  forHistory(year * 2 - window, (date, i) => {
+    // fetch a specific value for the [window] day window starting with day 'j'
     function lookup(j, N) {
       let result = [];
-      for (k = j; k < j + 7; ++k) {
+      for (k = j; k < j + window; ++k) {
         let d = dateString(k);
         let v = map[d];
         if (v) {
@@ -66,10 +59,11 @@ function analyzeHistory() {
     let today = map[date];
     let total_desktop = average(lookup(i, 2));
     let total_android = average(lookup(i, 3));
-    delta7.push([date, delta_desktop, delta_desktop/total_desktop*100, delta_android, delta_android/total_android*100].join(','));
+    deltaWindow.push([date, delta_desktop, delta_desktop/total_desktop*100, delta_android, delta_android/total_android*100].join(','));
   });
-  delta7.push(["Date", "Delta", "Delta %", "Delta", "Delta %"].join(','));
-  fs.writeFileSync('delta.csv', delta7.reverse().join('\n') + '\n');
+  deltaWindow.push(["Date", "Delta", "Delta %", "Delta", "Delta %"].join(','));
+  fs.writeFileSync('delta' + window + '.csv', deltaWindow.reverse().join('\n') + '\n');
 }
 
-analyzeHistory();
+analyzeHistory(7);
+analyzeHistory(90);
