@@ -1,4 +1,4 @@
-This collection of scripts fetch ADI data for Desktop and Android Firefox and do some analysis over the date. Amongst others the Year-over-Year delta to the previous year is calculated on a daily, 7-daily, 30-daily and 90-daily basis to smooth the data.
+This collection of scripts fetch ADI data for Desktop and Android Firefox and do some analysis over the data. Amongst others the Year-over-Year delta to the previous year is calculated on a daily, 7-daily, 30-daily and 90-daily basis to smooth the data.
 
 If you find any mistakes in the ADI fetching or analysis, please send a pull request.
 
@@ -13,3 +13,5 @@ Data for a couple days is missing, or was excluded:
 2013-12-29 server error
 2013-12-30 server error
 2013-12-31 server error
+
+Please note the disclaimer on the source of this data (arewestableyet.com). ADI stands for Active Daily Installs and is not a 100% accurate reflection of ADUs (Active Daily Users). An Firefox install can be active, but the user wasn't, and a user can be active but Firefox misses to checkin that given day. ADI is believed to underestimate ADU by about 10% (ballpark), so if you multiply this data by 1.1, it should give you an ADU estimate. This is an estimate only.
