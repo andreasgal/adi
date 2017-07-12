@@ -66,4 +66,5 @@ function analyzeHistory(window) {
 }
 
 analyzeHistory(7);
+analyzeHistory(30);
 analyzeHistory(90);
