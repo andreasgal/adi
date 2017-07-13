@@ -77,7 +77,7 @@ function refresh() {
   let index = {
     'Both': {
       daily: 1,
-      delta: 1,
+      delta: 5,
     },
     'Desktop': {
       daily: 2,

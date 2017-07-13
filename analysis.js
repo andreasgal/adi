@@ -59,7 +59,7 @@ function analyzeHistory(window) {
     let today = map[date];
     let total_desktop = average(lookup(i, 2));
     let total_android = average(lookup(i, 3));
-    deltaWindow.push([date, delta_desktop, delta_desktop/total_desktop*100, delta_android, delta_android/total_android*100].join(','));
+    deltaWindow.push([date, delta_desktop, delta_desktop/total_desktop*100, delta_android, delta_android/total_android*100, delta_desktop + delta_android].join(','));
   });
   deltaWindow.push(["Date", "Desktop/Delta", "Desktop/Delta%", "Android/Delta", "Android/Delta%"].join(','));
   fs.writeFileSync('delta' + window + '.csv', deltaWindow.reverse().join('\n') + '\n');
