@@ -24,3 +24,15 @@ html, body, .ct-chart {
     background-color: #a0a0a0;
     border-radius: 6px 6px 6px 6px;
 }
+
+.note {
+    position: absolute;
+    bottom: 1em;
+    width: 100%;
+    font-style: italic;
+    font-size: small;
+}
+
+.note div {
+    padding: 3px 3px 3px 3px;
+}

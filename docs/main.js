@@ -19,7 +19,7 @@ function plot(url, index) {
   }).then(data => {
     console.log(data);
     let options = {
-      chartPadding: 50,
+      chartPadding: 65,
       axisX: {
         labelInterpolationFnc: function(value, index) {
           if ((index % 30) !== 0) return null;
