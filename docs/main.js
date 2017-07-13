@@ -1,55 +1,85 @@
-function plot(d3, url, label) {
-  let svg = d3.select('svg');
-  let margin = {top: 20, right: 20, bottom: 30, left: 70};
-  let width = +svg.attr('width') - margin.left - margin.right;
-  let height = +svg.attr('height') - margin.top - margin.bottom;
-  let g = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-  let parseTime = d3.timeParse('%Y-%m-%d');
-  let x = d3.scaleTime().rangeRound([0, width]);
-  let y = d3.scaleLinear().rangeRound([height, 0]);
+function csv(url) {
+  return fetch(url)
+    .then(response => response.text())
+    .then(text => {
+      let rows = text.split('\n').filter(line => line !== '').map(line => line.split(','));
+      return {
+        labels: rows.shift(),
+        data: rows.map(row => row.map((value, n) => (n === 0) ? new Date(value) : +value)),
+      };
+    });
+}
 
-  let line = d3.line()
-    .x(function(d) { return x(d.Date); })
-    .y(function(d) { return y(d[label]); });
+function plot(url, index) {
+  csv(url).then(input => {
+    return {
+      labels: input.data.map(v => v[0].toString()),
+      series: [input.data.map(v => v[index])],
+    };
+  }).then(data => {
+    let options = {
+      chartPadding: 50,
+      axisX: {
+        labelInterpolationFnc: function(value, index) {
+          if ((index % 30) !== 0) return null;
+          let parts = value.split(' ');
+          return parts[1] + ' ' + parts[3];
+        }
+      },
+      axisY: {
+        labelInterpolationFnc: function(value) {
+          return Math.floor(value / 1000000) + 'M';
+        }
+      },
+    };
+    new Chartist.Line('.ct-chart', data, options);
+  }).catch(e => console.error(e));
+}
 
-  d3.csv(url, function(d) {
-    d.Date = parseTime(d.Date);
-    d[label] = +d[label];
-    return d;
-  }, function(error, data) {
-    if (error) throw error;
+let graph = 'daily';
+let smoothing = '7';
 
-    x.domain(d3.extent(data, function(d) { return d.Date; }));
-    y.domain(d3.extent(data, function(d) { return d[label]; }));
+function select(what) {
+  switch (what) {
+  case 'Daily':
+    graph = 'daily';
+    refresh();
+    return;
+  case 'Year over Year':
+    graph = 'delta';
+    refresh();
+    return;
+  case '7 days':
+  case '30 days':
+  case '90 days':
+    smoothing = +what.split(' ')[0];
+    refresh();
+    break;
+  }
+}
 
-    g.append('g')
-      .attr('transform', 'translate(0,' + height + ')')
-      .call(d3.axisBottom(x))
-      .select('.domain')
-      .remove();
-
-    g.append('g')
-      .call(d3.axisLeft(y))
-      .append('text')
-      .attr('fill', '#000')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', 6)
-      .attr('dy', '1em')
-      .attr('text-anchor', 'end')
-      .text('ADI');
-
-    g.append('path')
-      .datum(data)
-      .attr('fill', 'none')
-      .attr('stroke', 'steelblue')
-      .attr('stroke-linejoin', 'round')
-      .attr('stroke-linecap', 'round')
-      .attr('stroke-width', 2)
-      .attr('d', line);
+function highlight(selector, text, classname) {
+  document.querySelectorAll(selector).forEach(e => {
+    if (e.innerText === text) {
+      e.classList.add(classname);
+    } else {
+      e.classList.remove(classname);
+    }
   });
 }
 
-plot(window.d3, 'https://raw.githubusercontent.com/andreasgal/adi/master/delta7.csv', 'Desktop/Delta');
-window.setTimeout(() => {
-  plot(window.d3, 'https://raw.githubusercontent.com/andreasgal/adi/master/delta30.csv', 'Desktop/Delta');
-}, 2000);
+function refresh() {
+  plot('https://raw.githubusercontent.com/andreasgal/adi/master/' + graph + ((graph === 'delta') ? smoothing : '') + '.csv', 1);
+  document.querySelectorAll('.smoothing').forEach(e => {
+    e.style.display = (graph === 'delta') ? 'inline' : 'none';
+  });
+  highlight('.button.graph', (graph === 'daily') ? 'Daily' : 'Year over Year', 'selected');
+  highlight('.button.smoothing', smoothing + ' days', 'selected');
+}
+
+/* attach event handlers to all menu buttons */
+document.querySelectorAll("span.button").forEach(e => {
+  e.onclick = e => select(e.toElement.innerText);
+});
+
+select('Daily');

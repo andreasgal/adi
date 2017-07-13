@@ -2,11 +2,20 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="main.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+    <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
   </head>
   <body>
-    <svg id="a" width="1280" height="800"></svg>
-    <svg id="b" width="1280" height="800"></svg>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <div class="ct-chart .ct-major-sixth"></div>
+    <div class="menu">
+      <span>Graph:</span>
+      <span class="button graph">Daily</span>
+      <span class="button graph">Year over Year</span>
+      <span class="smoothing">Smoothing:</span>
+      <span class="button smoothing">7 days</span>
+      <span class="button smoothing">30 days</span>
+      <span class="button smoothing">90 days</span>
+    </div>
     <script src="main.js"></script>
   </body>
 </html>
