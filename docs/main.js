@@ -22,7 +22,6 @@ function plot(url, index) {
       series: [input.data.map(v => v[index])],
     };
   }).then(data => {
-    console.log(data);
     let options = {
       chartPadding: {
         top: 65,
@@ -38,8 +37,9 @@ function plot(url, index) {
         }
       },
       axisY: {
+        onlyInteger: true,
         labelInterpolationFnc: function(value) {
-          return percentage ? (Math.floor(value) + '%') : (Math.floor(value / 100000)/10 + 'M');
+          return (graph === 'delta' && percentage) ? (Math.floor(value) + '%') : (Math.floor(value / 100000)/10 + 'M');
         }
       },
     };
