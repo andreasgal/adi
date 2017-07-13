@@ -10,6 +10,11 @@ function csv(url) {
     });
 }
 
+let graph = 'daily';
+let smoothing = 90;
+let product = 'Desktop';
+let percentage = false;
+
 function plot(url, index) {
   csv(url).then(input => {
     return {
@@ -19,7 +24,12 @@ function plot(url, index) {
   }).then(data => {
     console.log(data);
     let options = {
-      chartPadding: 65,
+      chartPadding: {
+        top: 65,
+        bottom: 65,
+        left: 20,
+        right: 45,
+      },
       axisX: {
         labelInterpolationFnc: function(value, index) {
           if ((index % 30) !== 0) return null;
@@ -29,17 +39,13 @@ function plot(url, index) {
       },
       axisY: {
         labelInterpolationFnc: function(value) {
-          return Math.floor(value / 1000000) + 'M';
+          return percentage ? (Math.floor(value) + '%') : (Math.floor(value / 100000)/10 + 'M');
         }
       },
     };
     new Chartist.Line('.ct-chart', data, options);
   }).catch(e => console.error(e));
 }
-
-let graph = 'daily';
-let smoothing = 90;
-let product = 'Desktop';
 
 function select(what) {
   switch (what) {
@@ -59,6 +65,12 @@ function select(what) {
   case 'Both':
     product = what;
     break;
+  case 'Absolute':
+    percentage = false;
+    break;
+  case 'Relative':
+    percentage = true;
+    break;
   }
   refresh();
 }
@@ -76,25 +88,26 @@ function highlight(selector, text, classname) {
 function refresh() {
   let index = {
     'Both': {
-      daily: 1,
-      delta: 5,
+      daily: [1, 1],
+      delta: [5, 6],
     },
     'Desktop': {
-      daily: 2,
-      delta: 1,
+      daily: [2, 2],
+      delta: [1, 2],
     },
     'Android': {
-      daily: 3,
-      delta: 3,
+      daily: [3, 3],
+      delta: [3, 4],
     },
-  }[product][graph];
+  }[product][graph][percentage ? 1 : 0];
   plot('https://raw.githubusercontent.com/andreasgal/adi/master/' + graph + ((graph === 'delta') ? smoothing : '') + '.csv', index);
-  document.querySelectorAll('.smoothing').forEach(e => {
+  document.querySelectorAll('.smoothing,.percentage').forEach(e => {
     e.style.display = (graph === 'delta') ? 'inline' : 'none';
   });
   highlight('.button.graph', (graph === 'daily') ? 'Daily' : 'Year over Year', 'selected');
   highlight('.button.product', product, 'selected');
   highlight('.button.smoothing', smoothing + ' days', 'selected');
+  highlight('.button.percentage', percentage ? 'Relative' : 'Absolute', 'selected');
 }
 
 /* attach event handlers to all menu buttons */
