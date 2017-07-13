@@ -17,6 +17,7 @@ function plot(url, index) {
       series: [input.data.map(v => v[index])],
     };
   }).then(data => {
+    console.log(data);
     let options = {
       chartPadding: 50,
       axisX: {
@@ -37,25 +38,29 @@ function plot(url, index) {
 }
 
 let graph = 'daily';
-let smoothing = '7';
+let smoothing = 90;
+let product = 'Desktop';
 
 function select(what) {
   switch (what) {
   case 'Daily':
     graph = 'daily';
-    refresh();
-    return;
+    break;
   case 'Year over Year':
     graph = 'delta';
-    refresh();
-    return;
+    break;
   case '7 days':
   case '30 days':
   case '90 days':
     smoothing = +what.split(' ')[0];
-    refresh();
+    break;
+  case 'Desktop':
+  case 'Android':
+  case 'Both':
+    product = what;
     break;
   }
+  refresh();
 }
 
 function highlight(selector, text, classname) {
@@ -69,11 +74,26 @@ function highlight(selector, text, classname) {
 }
 
 function refresh() {
-  plot('https://raw.githubusercontent.com/andreasgal/adi/master/' + graph + ((graph === 'delta') ? smoothing : '') + '.csv', 1);
+  let index = {
+    'Both': {
+      daily: 1,
+      delta: 1,
+    },
+    'Desktop': {
+      daily: 2,
+      delta: 1,
+    },
+    'Android': {
+      daily: 3,
+      delta: 3,
+    },
+  }[product][graph];
+  plot('https://raw.githubusercontent.com/andreasgal/adi/master/' + graph + ((graph === 'delta') ? smoothing : '') + '.csv', index);
   document.querySelectorAll('.smoothing').forEach(e => {
     e.style.display = (graph === 'delta') ? 'inline' : 'none';
   });
   highlight('.button.graph', (graph === 'daily') ? 'Daily' : 'Year over Year', 'selected');
+  highlight('.button.product', product, 'selected');
   highlight('.button.smoothing', smoothing + ' days', 'selected');
 }
 
