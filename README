@@ -1,3 +1,5 @@
+Live view: https://andreasgal.github.io/adi/
+
 This collection of scripts fetch ADI data for Desktop and Android Firefox and do some analysis over the data. Amongst others the Year-over-Year delta to the previous year is calculated on a daily, 7-daily, 30-daily and 90-daily basis to smooth the data.
 
 If you find any mistakes in the ADI fetching or analysis, please send a pull request.
