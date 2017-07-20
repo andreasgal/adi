@@ -112,7 +112,7 @@ function refresh() {
 
 /* attach event handlers to all menu buttons */
 document.querySelectorAll("span.button").forEach(e => {
-  e.onclick = e => select(e.toElement.innerText);
+  e.onclick = e => select(e.target.innerText);
 });
 
 select('Daily');
